@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>San Valentino 💘</title>
+
+  <style>
+    :root{
+      --pink1:#ffd1dc;
+      --pink2:#ff7aa2;
+      --red1:#ff3355;
+      --dark:#222;
+    }
+
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background: radial-gradient(circle at top, #ffe6ee, #ffc2d4);
+      min-height:100vh;
+      overflow:hidden; /* importante per i cuori */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+      text-align:center;
+    }
+
+    .card{
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 20px;
+      padding: 28px 22px;
+      max-width: 520px;
+      width: 100%;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+      position: relative;
+      z-index: 2; /* sopra i cuori */
+    }
+
+    h1{
+      margin: 0 0 18px;
+      font-size: 1.9rem;
+      color: var(--dark);
+    }
+
+    #buttons{
+      margin-top: 18px;
+      position: relative;
+      height: 160px;
+    }
+
+    button{
+      font-size: 20px;
+      padding: 14px 26px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      position: absolute;
+      box-shadow: 0 10px 18px rgba(0,0,0,0.12);
+      transition: transform .08s ease;
+      user-select: none;
+    }
+    button:active{ transform: scale(0.98); }
+
+    #yes{
+      background: linear-gradient(135deg, var(--red1), var(--pink2));
+      color: white;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 10px;
+    }
+
+    #no{
+      background: #666;
+      color: white;
+      left: 22%;
+      top: 90px;
+    }
+
+    #result{
+      display:none;
+      margin-top: 10px;
+    }
+
+    #result h2{
+      margin: 10px 0 8px;
+      color: var(--dark);
+    }
+
+    #result p{
+      margin: 0 0 14px;
+      color: #333;
+      line-height: 1.35;
+    }
+
+    img{
+      max-width: 320px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+    }
+
+    /* ---- CUORICINI CHE SALGONO ---- */
+    .heart{
+      position: fixed;
+      bottom: -40px;
+      left: 50%;
+      font-size: 20px;
+      z-index: 1; /* dietro la card */
+      opacity: 0.85;
+      pointer-events: none;
+      animation-name: floatUp;
+      animation-timing-function: linear;
+      will-change: transform, opacity;
+      filter: drop-shadow(0 6px 6px rgba(0,0,0,0.12));
+    }
+
+    @keyframes floatUp{
+      0%   { transform: translate(-50%, 0) scale(0.9); opacity: 0; }
+      10%  { opacity: 0.9; }
+      100% { transform: translate(-50%, -120vh) scale(1.4); opacity: 0; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="card">
+    <h1>Vuoi essere la mia pallena per sempre? 🐳💖</h1>
+
+    <div id="buttons">
+      <button id="yes">SÌ</button>
+      <button id="no">NO</button>
+    </div>
+
+    <div id="result">
+      <h2>Buon San Valentino amore ❤️</h2>
+      <p>
+        Pensa quanto sei fortunato ad avere come fidanzata una che ha imparato a programmare
+        l’altro ieri solo per farti questo 😌
+      </p>
+      <img src="foto.jpg" alt="Noi due">
+    </div>
+  </div>
+
+  <script>
+    // --- Bottone NO che scappa ---
+    const noBtn = document.getElementById("no");
+    const yesBtn = document.getElementById("yes");
+
+    function moveNo(){
+      const area = document.getElementById("buttons");
+      const areaRect = area.getBoundingClientRect();
+
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = areaRect.width - btnRect.width;
+      const maxY = areaRect.height - btnRect.height;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+    }
+
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNo(); });
+
+    // --- Quando clicca SÌ: mostra foto e messaggio ---
+    function showLove(){
+      document.getElementById("buttons").style.display = "none";
+      document.getElementById("result").style.display  = "block";
+      // acceleriamo un po' i cuori per il finale
+      heartRate = 180;
+    }
+
+    yesBtn.addEventListener("click", showLove);
+
+    // --- Cuoricini "palloncino" che salgono ---
+    const heartColors = ["#ff3355", "#ff7aa2", "#ff5c8a", "#ff9bb8"];
+    let heartRate = 350; // ms: più basso = più cuori
+
+    function spawnHeart(){
+      const heart = document.createElement("div");
+      heart.className = "heart";
+      heart.textContent = "❤";
+
+      // posizione orizzontale random
+      const left = Math.random() * 100;
+      heart.style.left = left + "vw";
+
+      // colore random rosso/rosa
+      const c = heartColors[Math.floor(Math.random() * heartColors.length)];
+      heart.style.color = c;
+
+      // dimensione random
+      const size = 14 + Math.random() * 26;
+      heart.style.fontSize = size + "px";
+
+      // durata random
+      const duration = 4 + Math.random() * 4; // 4–8 secondi
+      heart.style.animationDuration = duration + "s";
+
+      document.body.appendChild(heart);
+
+      // rimuovi dopo l'animazione
+      setTimeout(() => heart.remove(), duration * 1000);
+    }
+
+    // genera cuori continuamente
+    function heartLoop(){
+      spawnHeart();
+      setTimeout(heartLoop, heartRate);
+    }
+    heartLoop();
+  </script>
+
+</body>
+</html>
